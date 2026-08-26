@@ -21,7 +21,7 @@
   ],
   "scripts": {
     "build": "tsc",
-    "test": "node test/run-tests.js"
+    "test": "node test/run-tests.js && node test/run-bidirectional-tests.js"
   },
   "keywords": [
     "mcp",
