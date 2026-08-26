@@ -1,6 +1,6 @@
 {
   "name": "mcp-websocket",
-  "version": "0.1.0",
+  "version": "1.0.2",
   "type": "module",
   "description": "Full-duplex WebSocket Transport for Model Context Protocol (MCP) in TypeScript and Node.js",
   "main": "./dist/index.js",
@@ -14,7 +14,7 @@
     }
   },
   "bin": {
-    "mcp-ws-bridge": "./dist/bridge.js"
+    "mcp-ws-bridge": "dist/bridge.js"
   },
   "files": [
     "dist",
