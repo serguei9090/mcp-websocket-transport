@@ -40,28 +40,37 @@ async def serve_websocket(
         with contextlib.suppress(Exception):
             await websocket.accept()
 
+    def parse_input(raw: Any) -> Any:
+        if hasattr(server, "parse_message"):
+            data = json.loads(raw) if isinstance(raw, (str, bytes)) else raw
+            return server.parse_message(data)
+        try:
+            import mcp.types as types
+            from mcp.server.session import SessionMessage
+
+            if isinstance(raw, (str, bytes)):
+                msg = types.jsonrpc_message_adapter.validate_json(raw, by_name=False)
+            else:
+                msg = types.jsonrpc_message_adapter.validate_python(raw, by_name=False)
+            return SessionMessage(msg)
+        except Exception:
+            if isinstance(raw, (str, bytes)):
+                try:
+                    return json.loads(raw)
+                except Exception as exc:
+                    return exc
+            return raw
+
     async def ws_reader():
         try:
             if is_starlette:
                 while True:
                     raw_msg = await websocket.receive_text()
-                    data = json.loads(raw_msg)
-                    if hasattr(server, "parse_message"):
-                        msg = server.parse_message(data)
-                    else:
-                        msg = data
+                    msg = parse_input(raw_msg)
                     await read_send.send(msg)
             else:
                 async for raw_msg in websocket:
-                    data = (
-                        json.loads(raw_msg)
-                        if isinstance(raw_msg, (str, bytes))
-                        else raw_msg
-                    )
-                    if hasattr(server, "parse_message"):
-                        msg = server.parse_message(data)
-                    else:
-                        msg = data
+                    msg = parse_input(raw_msg)
                     await read_send.send(msg)
         except Exception:
             pass

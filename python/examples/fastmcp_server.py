@@ -12,12 +12,21 @@ This file can be run in two ways:
 import argparse
 import asyncio
 import os
+import sys
 
-from mcp.server.fastmcp import FastMCP
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
+try:
+    # MCP SDK 2.x
+    from mcp.server.mcpserver import MCPServer as FastMCP
+except ImportError:
+    # MCP SDK 1.x
+    from mcp.server.fastmcp import FastMCP
 
 from mcp_transport_websocket import serve_websocket
 
-# 1. Initialize FastMCP Server
+# 1. Initialize MCP Server (FastMCP / MCPServer)
 mcp = FastMCP("calculator-and-data-server")
 
 
@@ -49,8 +58,10 @@ def summarize_text(text: str, max_words: int = 10) -> str:
 async def run_websocket_server(port: int = 8765):
     import websockets
 
-    # Extract the underlying low-level MCP server from FastMCP
-    lowlevel_server = mcp._mcp_server
+    # Extract the underlying low-level MCP server from FastMCP / MCPServer
+    lowlevel_server = getattr(mcp, "_lowlevel_server", None) or getattr(
+        mcp, "_mcp_server", None
+    )
 
     async def ws_handler(websocket):
         print(f"[SERVER] Client connected from {websocket.remote_address}")

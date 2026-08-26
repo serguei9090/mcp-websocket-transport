@@ -38,6 +38,8 @@ JSONRPCMessage = JSONRPCRequest | JSONRPCNotification | JSONRPCResponse | dict[s
 
 def serialize_message(msg: Any) -> str:
     """Serializes an MCP or JSON-RPC message into a JSON string."""
+    if hasattr(msg, "message") and hasattr(msg.message, "model_dump_json"):
+        return msg.message.model_dump_json(by_alias=True, exclude_unset=True)
     if hasattr(msg, "model_dump_json"):
         return msg.model_dump_json(by_alias=True, exclude_none=True)
     elif hasattr(msg, "json"):
