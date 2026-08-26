@@ -77,15 +77,28 @@ def main_cli():
         description="Bridge standard I/O (stdin/stdout) to an MCP WebSocket server.",
     )
     parser.add_argument(
-        "url",
+        "url_pos",
         nargs="?",
-        default=os.getenv("MCP_WS_URL", "ws://localhost:8765"),
-        help="Target MCP WebSocket URL (default: ws://localhost:8765 or MCP_WS_URL env)",
+        default=None,
+        help="Target MCP WebSocket URL (positional)",
+    )
+    parser.add_argument(
+        "--url",
+        dest="url_opt",
+        default=None,
+        help="Target MCP WebSocket URL (--url flag)",
     )
     args = parser.parse_args()
 
+    target_url = (
+        args.url_opt
+        or args.url_pos
+        or os.getenv("MCP_WS_URL")
+        or "ws://localhost:8767"
+    )
+
     with contextlib.suppress(KeyboardInterrupt, asyncio.CancelledError):
-        asyncio.run(run_bridge(args.url))
+        asyncio.run(run_bridge(target_url))
 
 
 if __name__ == "__main__":

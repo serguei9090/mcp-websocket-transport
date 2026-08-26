@@ -53,7 +53,17 @@ if (
   import.meta.url === `file://${process.argv[1]}` ||
   process.argv[1]?.endsWith("mcp-ws-bridge")
 ) {
-  const targetUrl = process.argv[2];
+  let targetUrl: string | undefined;
+  const args = process.argv.slice(2);
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === "--url" && i + 1 < args.length) {
+      targetUrl = args[i + 1];
+      break;
+    } else if (!args[i].startsWith("-") && !targetUrl) {
+      targetUrl = args[i];
+    }
+  }
+
   runBridge(targetUrl).catch((err) => {
     process.stderr.write(`Bridge fatal error: ${err.message}\n`);
     process.exit(1);
