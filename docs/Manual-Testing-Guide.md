@@ -1,130 +1,171 @@
-# MCP WebSocket Transport: Manual Testing & Verification Guide
+# 🧪 MCP WebSocket Transport: Complete Manual & Automated Testing Guide
 
-This guide covers:
-1. **Testing with `mcp dev` (Official MCP Inspector)**
-2. **Connecting a Real-Case AI Agent to your MCP Server over WebSocket**
-3. **Running the TypeScript and Python test suites**
+This guide provides end-to-end instructions for testing the **`mcp-websocket`** packages across all layers:
+1. **Automated Unit & Integration Tests** (Pytest & Bun/Node)
+2. **Standalone Client-Server Execution** (Python & TypeScript)
+3. **End-to-End Desktop Host Testing** (Antigravity, LM Studio / Gemma 4, Claude Desktop)
+4. **Docker Multi-Container Testing** (`docker compose`)
 
 ---
 
-## 1. How to Test with `mcp dev` (Official MCP Inspector)
+## 📋 Table of Contents
+- [1. Automated Unit & Integration Tests](#1-automated-unit--integration-tests)
+  - [A. Python Test Suite](#a-python-test-suite)
+  - [B. TypeScript Test Suite](#b-typescript-test-suite)
+- [2. Standalone Client-Server Execution](#2-standalone-client-server-execution)
+  - [A. Python Server & Client](#a-python-server--client)
+  - [B. TypeScript Server & Client](#b-typescript-server--client)
+- [3. End-to-End Testing with AI Hosts (Antigravity & LM Studio)](#3-end-to-end-testing-with-ai-hosts-antigravity--lm-studio)
+  - [A. Testing with Google Antigravity](#a-testing-with-google-antigravity)
+  - [B. Testing with LM Studio & Local Gemma Model](#b-testing-with-lm-studio--local-gemma-model)
+- [4. Docker Multi-Container Testing](#4-docker-multi-container-testing)
 
-The official `mcp dev` command launches the **MCP Inspector** web UI, allowing you to visually inspect tools, schemas, resources, and execute tool calls interactively.
+---
 
-### Option A: Testing FastMCP Server with `mcp dev`
-We created [`python/examples/fastmcp_server.py`](file:///i:/01-Master_Code/Apps/MCP-WebSocket-Transport/python/examples/fastmcp_server.py), which supports both `mcp dev` (stdio) and live WebSocket server modes.
+## 1. Automated Unit & Integration Tests
 
-Run the inspector:
+Both language implementations include comprehensive test suites verifying:
+- Client $\rightarrow$ Server: Tool Discovery (`tools/list`) and Execution (`tools/call`)
+- Server $\rightarrow$ Client: Reverse Sampling (`sampling/createMessage`)
+- Server $\rightarrow$ Client: Workspace Roots Query (`roots/list`)
+- Server $\rightarrow$ Client: Real-time Progress Notifications (`notifications/progress`)
+- Server $\rightarrow$ Client: Live Log Streaming (`notifications/message`)
+
+### A. Python Test Suite
+
 ```bash
 cd python
-uv run --with "mcp[cli]" mcp dev examples/fastmcp_server.py
+uv run --all-extras pytest -v -s
 ```
 
-**What happens:**
-1. MCP Inspector starts a local web server (usually at `http://localhost:5173`).
-2. Open the URL in your browser.
-3. You will see all registered tools (`add_numbers`, `get_stock_price`, `summarize_text`).
-4. You can click **"Call Tool"**, enter parameters, and view the response directly in the UI.
+**Expected Output:**
+```text
+============================= test session starts =============================
+platform win32 -- Python 3.13.3, pytest-9.1.1, pluggy-1.6.0
+collected 2 items
+
+tests/test_bidirectional_sampling_and_progress.py::test_full_duplex_bidirectional_transport PASSED [ 50%]
+tests/test_transport.py::test_websocket_transport_roundtrip PASSED                                 [100%]
+
+============================== 2 passed in 1.54s ==============================
+```
 
 ---
 
-## 2. Real-Case Test: Connecting an AI Agent over WebSocket
+### B. TypeScript Test Suite
 
-This simulates the real-world production workflow where an AI model (OpenAI / Claude / Gemini / Local LLM) connects to your remote MCP server via WebSocket, discovers tools, and invokes them.
+```bash
+cd typescript
+bun run test
+```
+
+**Expected Output:**
+```text
+=== Starting TypeScript MCP WebSocket Transport Test Suite ===
+Test 1: Sending Ping request...
+✓ Test 1 Passed: Ping roundtrip successful
+Test 2: Sending Echo request...
+✓ Test 2 Passed: Echo roundtrip successful
+=== All TypeScript Tests Passed Successfully! ===
+
+=== Starting TypeScript Full-Duplex Bidirectional Test Suite ===
+
+[TEST 1] Handshake & Reverse Roots Query...
+   📥 [Client] Received Server-Initiated `roots/list` request!
+✓ Test 1 Passed: Handshake and Server-Initiated Roots successful.
+
+[TEST 2] Server-Initiated Sampling (Server calls Client LLM)...
+   📥 [Client] Received Server-Initiated `sampling/createMessage` request!
+✓ Test 2 Passed: Reverse Sampling roundtrip completed over WebSocket.
+
+[TEST 3] Server Progress Notifications...
+   📊 [Client] Received progress notification: 1/3
+   📊 [Client] Received progress notification: 2/3
+   📊 [Client] Received progress notification: 3/3
+✓ Test 3 Passed: Real-time progress push verified.
+
+=== All TypeScript Bidirectional Tests Passed 100%! ===
+```
+
+---
+
+## 2. Standalone Client-Server Execution
+
+### A. Python Server & Client
+
+1. **Start Python Server (Terminal 1):**
+   ```bash
+   cd python
+   uv run python examples/mcp_tool_server.py
+   ```
+   *Output: `[SERVER] Python MCP Tool Server listening on ws://0.0.0.0:8767`*
+
+2. **Run Python Client (Terminal 2):**
+   ```bash
+   cd python
+   uv run python examples/mcp_tool_client.py
+   ```
+   *Executes `calculate_bmi` and `reverse_string` over the WebSocket connection.*
+
+---
+
+### B. TypeScript Server & Client
+
+1. **Start TypeScript Server (Terminal 1):**
+   ```bash
+   cd typescript
+   bun run examples/mcp-tool-server.ts
+   ```
+   *Output: `🚀 TypeScript MCP WebSocket Tool Server listening on ws://0.0.0.0:8765`*
+
+2. **Run TypeScript Client (Terminal 2):**
+   ```bash
+   cd typescript
+   bun run examples/mcp-tool-client.ts
+   ```
+   *Executes `add_numbers` and `get_system_info` over the WebSocket connection.*
+
+---
+
+## 3. End-to-End Testing with AI Hosts (Antigravity & LM Studio)
+
+Desktop MCP hosts communicate over standard I/O (`stdio`).  
+Both packages include the **`mcp-ws-bridge`** CLI to seamlessly connect any desktop host to the live WebSocket server.
 
 ```
-┌───────────────────────────────────────────────────────────┐
-│                      AI Client / Agent                    │
-│ 1. Connects to ws://localhost:8765                        │
-│ 2. Handshake (`initialize`)                               │
-│ 3. Fetches tools (`tools/list`)                           │
-│ 4. LLM decides tool + args: `get_stock_price(NVDA)`       │
-│ 5. Executes `tools/call` over WebSocket                   │
-└─────────────────────────────┬─────────────────────────────┘
-                              │
-                    WebSocket │ Full-Duplex
-                              │ JSON-RPC 2.0
+┌────────────────────────────────────────────────────────────┐
+│          Antigravity / LM Studio / Claude Desktop          │
+│                      (STDIO Interface)                     │
+└─────────────────────────────┬──────────────────────────────┘
+                              │ stdin / stdout
                               ▼
-┌───────────────────────────────────────────────────────────┐
-│                  MCP WebSocket Server                     │
-│ 1. Receives `tools/call`                                  │
-│ 2. Executes Python/TS function                            │
-│ 3. Streams result back over WebSocket                     │
-└───────────────────────────────────────────────────────────┘
-```
-
-### Python Real-Case AI Test
-
-#### Step 1: Start the MCP Server on WebSocket
-```bash
-cd python
-uv run --with "mcp[cli]" python examples/fastmcp_server.py --ws
-```
-*Output:*
-```text
-🚀 FastMCP Server running over WebSocket on ws://localhost:8765
-```
-
-#### Step 2: Run the AI Agent Client
-In a second terminal:
-```bash
-cd python
-uv run python examples/ai_mcp_agent.py
-```
-*Output:*
-```text
-🤖 [AI Agent] Starting session with server at ws://localhost:8765
-💬 [User Query]: "What is the real-time stock price of NVDA and what is 45 + 55?"
-
-1️⃣ [AI Agent] Initializing MCP connection...
-   Connected to: calculator-and-data-server (v1.0.0)
-
-2️⃣ [AI Agent] Discovering available tools from MCP server...
-   Found 3 tools:
-   - add_numbers: Adds two numbers together and returns the sum.
-   - get_stock_price: Fetches real-time stock price data for a ticker symbol.
-   - summarize_text: Summarizes input text to a concise headline.
-
-3️⃣ [AI Agent] Parsing query & planning tool calls...
-
-4️⃣ [AI Agent] Executing tool calls over WebSocket transport...
-   📤 Sending `tools/call` for 'get_stock_price' with args {"symbol": "NVDA"}...
-   📥 Received result: [{"type": "text", "text": "{\"symbol\": \"NVDA\", \"price\": 128.9, \"currency\": \"USD\"}"}]
-   📤 Sending `tools/call` for 'add_numbers' with args {"a": 45.0, "b": 55.0}...
-   📥 Received result: [{"type": "text", "text": "100.0"}]
-
-5️⃣ [AI Agent] Synthesizing final answer:
---------------------------------------------------
-Based on the tools executed via MCP WebSocket server:
-- NVDA Stock Price: $128.90 USD
-- Calculation (45 + 55): 100.0
---------------------------------------------------
+┌────────────────────────────────────────────────────────────┐
+│                    `mcp-ws-bridge`                         │
+│            (Transparent Auto-Retrying Pipe)                │
+└─────────────────────────────┬──────────────────────────────┘
+                              │ WebSocket (ws://)
+                              ▼
+┌────────────────────────────────────────────────────────────┐
+│                 MCP WebSocket Server                       │
+│    Python (ws://localhost:8767) | TS (ws://localhost:8765)  │
+└────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-### TypeScript Real-Case AI Test
+### A. Testing with Google Antigravity
 
-#### Step 1: Start the TypeScript MCP Server
-```bash
-cd typescript
-bun run examples/mcp-tool-server.ts
-```
+#### Step 1: Start the target WebSocket Server in your terminal
+* For Python:
+  ```bash
+  cd python && uv run python examples/mcp_tool_server.py
+  ```
+* For TypeScript:
+  ```bash
+  cd typescript && bun run examples/mcp-tool-server.ts
+  ```
 
-#### Step 2: Run the TypeScript AI Client
-In a second terminal:
-```bash
-cd typescript
-bun run examples/ai-mcp-agent.ts
-```
-
----
-
-## 3. Connecting to External MCP Desktop Hosts (Claude Desktop / Antigravity / LM Studio)
-
-Desktop MCP hosts communicate via standard I/O (`stdio`). You can connect them to any running WebSocket server using the built-in `mcp-ws-bridge`:
-
-### Python Bridge Configuration:
+#### Step 2: Add to Antigravity Configuration (`mcp_config.json`):
 ```json
 {
   "mcpServers": {
@@ -139,15 +180,7 @@ Desktop MCP hosts communicate via standard I/O (`stdio`). You can connect them t
         "--url",
         "ws://localhost:8767"
       ]
-    }
-  }
-}
-```
-
-### TypeScript Bridge Configuration:
-```json
-{
-  "mcpServers": {
+    },
     "websocket-ts-tools": {
       "command": "bun",
       "args": [
@@ -161,15 +194,50 @@ Desktop MCP hosts communicate via standard I/O (`stdio`). You can connect them t
 }
 ```
 
+#### Step 3: Test in Antigravity Chat
+Prompt the AI:
+> *"Use the Python MCP tools to calculate the BMI for 75 kg and 1.78 m, and reverse the text 'Model Context Protocol'."*
+
+**Result:** Antigravity executes the tools in real time and returns:
+- `BMI: 23.67 (Normal weight)`
+- `Reversed: 'locotorP txetnoC ledoM'`
+
 ---
 
-## 4. Live Testing with Local LLM (LM Studio / Gemma)
+### B. Testing with LM Studio & Local Gemma Model
 
-1. Start the Python server:
+1. Start your Python WebSocket server (`ws://0.0.0.0:8767`).
+2. Add the same `websocket-python-tools` config to LM Studio's MCP settings.
+3. In LM Studio, load your model (e.g. **`google/gemma-4-e2b`**).
+4. Verify the MCP tools indicator shows green.
+5. In the chat, send your prompt. Gemma will invoke the tools and display the structured tool call frames directly in the UI!
+
+---
+
+## 4. Docker Multi-Container Testing
+
+To verify containerized execution:
+
+1. **Launch Containers:**
    ```bash
-   cd python
-   uv run python examples/mcp_tool_server.py
+   cd docker
+   docker compose up --build -d
    ```
-2. Open LM Studio, load your model (e.g. `google/gemma-4-e2b`), and ask:
-   > *"Calculate my BMI for 80 kg and 1.85 m, and reverse the text 'WebSocket Transport'."*
-3. Gemma will execute the tools over the WebSocket connection in real time!
+
+2. **Verify Running Ports:**
+   - Python Server: `ws://localhost:8767`
+   - TypeScript Server: `ws://localhost:8765`
+
+3. **Test against Containers from Host:**
+   ```bash
+   # Test Python container
+   cd python && uv run python examples/mcp_tool_client.py
+   
+   # Test TypeScript container
+   cd typescript && bun run examples/mcp-tool-client.ts
+   ```
+
+4. **Stop Containers:**
+   ```bash
+   cd docker && docker compose down
+   ```

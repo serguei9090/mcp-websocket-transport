@@ -20,3 +20,4 @@ build/
 .env
 .env.local
 hooks_log.txt
+Publishing-Guide.md
