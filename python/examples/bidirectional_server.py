@@ -17,7 +17,7 @@ import websockets
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")
 
-from mcp_websocket import (
+from mcp_websocket_transport import (
     JSONRPCNotification,
     JSONRPCRequest,
     JSONRPCResponse,

@@ -5,7 +5,7 @@ Pytest unit tests for MCP WebSocket Transport.
 import pytest
 import websockets
 
-from mcp_websocket import (
+from mcp_websocket_transport import (
     JSONRPCRequest,
     WebSocketClientTransport,
     serve_websocket,

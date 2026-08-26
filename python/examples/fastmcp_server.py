@@ -24,7 +24,7 @@ except ImportError:
     # MCP SDK 1.x
     from mcp.server.fastmcp import FastMCP
 
-from mcp_websocket import serve_websocket
+from mcp_websocket_transport import serve_websocket
 
 # 1. Initialize MCP Server (FastMCP / MCPServer)
 mcp = FastMCP("calculator-and-data-server")

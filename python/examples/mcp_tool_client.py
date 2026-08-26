@@ -7,7 +7,7 @@ import asyncio
 import json
 import sys
 
-from mcp_websocket import JSONRPCRequest, WebSocketClientTransport
+from mcp_websocket_transport import JSONRPCRequest, WebSocketClientTransport
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")

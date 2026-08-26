@@ -1,9 +1,9 @@
-# 🌐 MCP WebSocket (`mcp-websocket`)
+# 🌐 MCP WebSocket Transport (`mcp-websocket-transport`)
 
-[![PyPI Version](https://img.shields.io/pypi/v/mcp-websocket?color=blue&label=PyPI)](https://pypi.org/project/mcp-websocket/)
-[![npm Version](https://img.shields.io/npm/v/mcp-websocket?color=red&label=npm)](https://www.npmjs.com/package/mcp-websocket)
-[![Python Support](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/mcp-websocket/)
-[![Node / Bun](https://img.shields.io/badge/runtime-Node.js%20%7C%20Bun-green)](https://www.npmjs.com/package/mcp-websocket)
+[![PyPI Version](https://img.shields.io/pypi/v/mcp-websocket-transport?color=blue&label=PyPI)](https://pypi.org/project/mcp-websocket-transport/)
+[![npm Version](https://img.shields.io/npm/v/mcp-websocket-transport?color=red&label=npm)](https://www.npmjs.com/package/mcp-websocket-transport)
+[![Python Support](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/mcp-websocket-transport/)
+[![Node / Bun](https://img.shields.io/badge/runtime-Node.js%20%7C%20Bun-green)](https://www.npmjs.com/package/mcp-websocket-transport)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
 > **High-Performance, Full-Duplex WebSocket Transport & Universal Bridge for the Model Context Protocol (MCP).**  
@@ -31,8 +31,8 @@ The standard Model Context Protocol (MCP) defines `stdio` (local subprocesses) a
 
 | Language | Directory | Package Name | Registry | Status |
 | :--- | :--- | :--- | :--- | :--- |
-| **Python** | [`python/`](python/) | **`mcp-websocket`** | PyPI (`v0.1.0`) | [![PyPI](https://img.shields.io/pypi/v/mcp-websocket)](https://pypi.org/project/mcp-websocket/) |
-| **TypeScript** | [`typescript/`](typescript/) | **`mcp-websocket`** | npm (`v0.1.0`) | [![npm](https://img.shields.io/npm/v/mcp-websocket)](https://www.npmjs.com/package/mcp-websocket) |
+| **Python** | [`python/`](python/) | **`mcp-websocket-transport`** | PyPI (`v1.0.0`) | [![PyPI](https://img.shields.io/pypi/v/mcp-websocket-transport)](https://pypi.org/project/mcp-websocket-transport/) |
+| **TypeScript** | [`typescript/`](typescript/) | **`mcp-websocket-transport`** | npm (`v1.0.0`) | [![npm](https://img.shields.io/npm/v/mcp-websocket-transport)](https://www.npmjs.com/package/mcp-websocket-transport) |
 | **CLI Bridge** | [`python/`](python/) & [`typescript/`](typescript/) | **`mcp-ws-bridge`** | PyPI / npm | Built-in CLI |
 
 ---
@@ -42,10 +42,10 @@ The standard Model Context Protocol (MCP) defines `stdio` (local subprocesses) a
 ### Installation
 ```bash
 # With uv (recommended)
-uv add mcp-websocket
+uv add mcp-websocket-transport
 
 # With pip
-pip install mcp-websocket
+pip install mcp-websocket-transport
 ```
 
 ### 1. Server Example (Python)
@@ -53,7 +53,7 @@ pip install mcp-websocket
 import asyncio
 import websockets
 from mcp.server.fastmcp import FastMCP
-from mcp_websocket import serve_websocket
+from mcp_websocket_transport import serve_websocket
 
 mcp = FastMCP("calculator-server")
 
@@ -78,7 +78,7 @@ if __name__ == "__main__":
 ```python
 import asyncio
 from mcp.client.session import ClientSession
-from mcp_websocket import WebSocketClientTransport
+from mcp_websocket_transport import WebSocketClientTransport
 
 async def main():
     async with WebSocketClientTransport("ws://localhost:8765") as (read_stream, write_stream):
@@ -100,10 +100,10 @@ asyncio.run(main())
 ### Installation
 ```bash
 # With bun
-bun add mcp-websocket
+bun add mcp-websocket-transport
 
 # With npm
-npm install mcp-websocket
+npm install mcp-websocket-transport
 ```
 
 ### 1. Server Example (TypeScript)
@@ -111,14 +111,14 @@ npm install mcp-websocket
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocketServer } from "ws";
-import { WebSocketServerTransport } from "mcp-websocket";
+import { WebSocketServerTransport } from "mcp-websocket-transport";
 
 const wss = new WebSocketServer({ port: 8765 });
 console.log("🚀 MCP WebSocket Server running on ws://localhost:8765");
 
 wss.on("connection", async (ws) => {
   const server = new Server(
-    { name: "calculator-server", version: "0.1.0" },
+    { name: "calculator-server", version: "1.0.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -146,11 +146,11 @@ wss.on("connection", async (ws) => {
 ### 2. Client Example (TypeScript / Browser)
 ```typescript
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { WebSocketClientTransport } from "mcp-websocket";
+import { WebSocketClientTransport } from "mcp-websocket-transport";
 import WebSocket from "ws";
 
 async function main() {
-  const client = new Client({ name: "ts-agent", version: "0.1.0" });
+  const client = new Client({ name: "ts-agent", version: "1.0.0" });
   await client.connect(new WebSocketClientTransport("ws://localhost:8765", { WebSocket }));
 
   const tools = await client.listTools();
@@ -206,7 +206,7 @@ Both Python and TypeScript packages bundle the **`mcp-ws-bridge` CLI**, allowing
         "path/to/mcp-websocket/python",
         "python",
         "-m",
-        "mcp_websocket.bridge",
+        "mcp_websocket_transport.bridge",
         "--url",
         "ws://localhost:8767"
       ]
@@ -270,7 +270,6 @@ bun run test
 
 * 📄 [**Protocol Architecture & Formal Specification**](docs/MCP-WebSocket-Transport-Specification.md): Complete RFC-style specification with sequence diagrams and comparison matrices.
 * 📖 [**Manual Testing & Verification Guide**](docs/Manual-Testing-Guide.md): Interactive instructions for testing with LM Studio, Antigravity, and Google GenAI.
-* 🚀 [**Publishing & Release Guide**](docs/Testing-and-Publishing-Guide.md): Guide for publishing to PyPI and npm.
 
 ---
 

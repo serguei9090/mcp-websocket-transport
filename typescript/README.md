@@ -1,7 +1,7 @@
-# 🟦 TypeScript `mcp-websocket`
+# 🟦 TypeScript `mcp-websocket-transport`
 
-[![npm Version](https://img.shields.io/npm/v/mcp-websocket?color=red&label=npm)](https://www.npmjs.com/package/mcp-websocket)
-[![Runtime Support](https://img.shields.io/badge/runtime-Node.js%20%7C%20Bun%20%7C%20Browser-green)](https://www.npmjs.com/package/mcp-websocket)
+[![npm Version](https://img.shields.io/npm/v/mcp-websocket-transport?color=red&label=npm)](https://www.npmjs.com/package/mcp-websocket-transport)
+[![Runtime Support](https://img.shields.io/badge/runtime-Node.js%20%7C%20Bun%20%7C%20Browser-green)](https://www.npmjs.com/package/mcp-websocket-transport)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
 
 Full-duplex WebSocket Transport for the Model Context Protocol (MCP) in TypeScript, Node.js, Bun, and modern browser runtimes.
@@ -12,13 +12,13 @@ Full-duplex WebSocket Transport for the Model Context Protocol (MCP) in TypeScri
 
 ```bash
 # Using bun (recommended)
-bun add mcp-websocket @modelcontextprotocol/sdk ws
+bun add mcp-websocket-transport @modelcontextprotocol/sdk ws
 
 # Using npm
-npm install mcp-websocket @modelcontextprotocol/sdk ws
+npm install mcp-websocket-transport @modelcontextprotocol/sdk ws
 
 # Using pnpm
-pnpm add mcp-websocket @modelcontextprotocol/sdk ws
+pnpm add mcp-websocket-transport @modelcontextprotocol/sdk ws
 ```
 
 ---
@@ -30,14 +30,14 @@ pnpm add mcp-websocket @modelcontextprotocol/sdk ws
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocketServer } from "ws";
-import { WebSocketServerTransport } from "mcp-websocket";
+import { WebSocketServerTransport } from "mcp-websocket-transport";
 
 const wss = new WebSocketServer({ port: 8765 });
 console.log("🚀 MCP WebSocket Server running on ws://localhost:8765");
 
 wss.on("connection", async (ws) => {
   const server = new Server(
-    { name: "calculator-server", version: "0.1.0" },
+    { name: "calculator-server", version: "1.0.0" },
     { capabilities: { tools: {} } }
   );
 
@@ -67,11 +67,11 @@ wss.on("connection", async (ws) => {
 ### 2. TypeScript MCP Client (`examples/mcp-tool-client.ts`)
 ```typescript
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { WebSocketClientTransport } from "mcp-websocket";
+import { WebSocketClientTransport } from "mcp-websocket-transport";
 import WebSocket from "ws";
 
 async function main() {
-  const client = new Client({ name: "ts-client", version: "0.1.0" });
+  const client = new Client({ name: "ts-client", version: "1.0.0" });
   await client.connect(new WebSocketClientTransport("ws://localhost:8765", { WebSocket }));
 
   const tools = await client.listTools();

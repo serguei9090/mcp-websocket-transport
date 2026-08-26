@@ -12,7 +12,7 @@ import sys
 
 import websockets
 
-from mcp_websocket import (
+from mcp_websocket_transport import (
     JSONRPCNotification,
     JSONRPCRequest,
     JSONRPCResponse,

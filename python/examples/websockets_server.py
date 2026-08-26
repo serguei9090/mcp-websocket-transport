@@ -6,7 +6,7 @@ import asyncio
 
 import websockets
 
-from mcp_websocket import serve_websocket
+from mcp_websocket_transport import serve_websocket
 
 
 class DummyMCPServer:

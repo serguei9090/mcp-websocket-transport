@@ -12,7 +12,7 @@ PKG_DIR = Path(__file__).resolve().parent.parent
 if str(PKG_DIR) not in sys.path:
     sys.path.insert(0, str(PKG_DIR))
 
-from mcp_websocket.bridge import main_cli  # noqa: E402
+from mcp_websocket_transport.bridge import main_cli  # noqa: E402
 
 if __name__ == "__main__":
     main_cli()
