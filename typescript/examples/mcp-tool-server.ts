@@ -77,9 +77,10 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 // 3. Start WebSocket Server
-const port = 8765;
-const wss = new WebSocketServer({ port });
-console.log(`🚀 MCP WebSocket Tool Server listening on ws://localhost:${port}`);
+const port = Number(process.env.PORT || 8765);
+const host = process.env.HOST || "0.0.0.0";
+const wss = new WebSocketServer({ port, host });
+console.log(`🚀 MCP WebSocket Tool Server listening on ws://${host}:${port}`);
 
 wss.on("connection", async (ws) => {
   console.log("⚡ Client connected to MCP Server");

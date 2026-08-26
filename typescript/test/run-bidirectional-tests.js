@@ -24,12 +24,10 @@ async function runBidirectionalTestSuite() {
   const wss = new WebSocketServer({ port });
 
   const pendingServerRequests = new Map();
-  let serverTransportRef;
   let clientRoots = [];
 
   wss.on("connection", async (ws) => {
     const serverTransport = new WebSocketServerTransport(ws);
-    serverTransportRef = serverTransport;
 
     serverTransport.onmessage = async (msg) => {
       const msgId = msg.id;
@@ -234,14 +232,21 @@ async function runBidirectionalTestSuite() {
     protocolVersion: "2024-11-05",
     capabilities: {},
   });
-  assert.strictEqual(initRes.result.serverInfo.name, "ts-bidirectional-proof-server");
+  assert.strictEqual(
+    initRes.result.serverInfo.name,
+    "ts-bidirectional-proof-server",
+  );
   await new Promise((r) => setTimeout(r, 50));
   assert.strictEqual(clientRoots.length, 1);
   assert.strictEqual(clientRoots[0].name, "TS App");
-  console.log("✓ Test 1 Passed: Handshake and Server-Initiated Roots successful.");
+  console.log(
+    "✓ Test 1 Passed: Handshake and Server-Initiated Roots successful.",
+  );
 
   // 2. Server-Initiated Sampling during Tool Call
-  console.log("\n[TEST 2] Server-Initiated Sampling (Server calls Client LLM)...");
+  console.log(
+    "\n[TEST 2] Server-Initiated Sampling (Server calls Client LLM)...",
+  );
   const toolRes = await sendClientRequest("tools/call", {
     name: "ai_assisted_refactor",
     arguments: { code: "var x = 40 + 2;" },
@@ -249,7 +254,9 @@ async function runBidirectionalTestSuite() {
   assert.ok(
     toolRes.result.content[0].text.includes("const x = 42; // Optimized"),
   );
-  console.log("✓ Test 2 Passed: Reverse Sampling roundtrip completed over WebSocket.");
+  console.log(
+    "✓ Test 2 Passed: Reverse Sampling roundtrip completed over WebSocket.",
+  );
 
   // 3. Real-Time Server Progress Push
   console.log("\n[TEST 3] Server Progress Notifications...");

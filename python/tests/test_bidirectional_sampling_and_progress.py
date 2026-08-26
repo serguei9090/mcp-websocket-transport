@@ -11,8 +11,10 @@ Demonstrates and verifies:
 
 import asyncio
 import uuid
+
 import pytest
 import websockets
+
 from mcp_transport_websocket import (
     JSONRPCNotification,
     JSONRPCRequest,
@@ -53,7 +55,9 @@ class AdvancedBidirectionalMCPServer:
 
                 # If this message is a response to a server-initiated request, resolve it immediately
                 msg_id = str(msg.get("id"))
-                if msg_id in self.pending_requests and ("result" in msg or "error" in msg):
+                if msg_id in self.pending_requests and (
+                    "result" in msg or "error" in msg
+                ):
                     fut = self.pending_requests.pop(msg_id)
                     if not fut.done():
                         if "error" in msg and msg["error"]:
@@ -186,7 +190,9 @@ class AdvancedBidirectionalMCPServer:
             # SCENARIO B: Real-Time Server Progress Push (notifications/progress)
             elif tool_name == "heavy_processing_job":
                 steps = arguments.get("steps", 4)
-                progress_token = params.get("_meta", {}).get("progressToken", "prog-100")
+                progress_token = params.get("_meta", {}).get(
+                    "progressToken", "prog-100"
+                )
 
                 for i in range(1, steps + 1):
                     await asyncio.sleep(0.01)
@@ -249,7 +255,10 @@ async def test_full_duplex_bidirectional_transport():
                             "sampling": {},
                             "roots": {"listChanged": True},
                         },
-                        "clientInfo": {"name": "test-bidirectional-client", "version": "1.0.0"},
+                        "clientInfo": {
+                            "name": "test-bidirectional-client",
+                            "version": "1.0.0",
+                        },
                     },
                 )
             )
@@ -267,7 +276,11 @@ async def test_full_duplex_bidirectional_transport():
             await write_stream.send(
                 JSONRPCResponse(
                     id=roots_req_id,
-                    result={"roots": [{"uri": "file:///workspace/project", "name": "Main Project"}]},
+                    result={
+                        "roots": [
+                            {"uri": "file:///workspace/project", "name": "Main Project"}
+                        ]
+                    },
                 )
             )
 
@@ -283,7 +296,9 @@ async def test_full_duplex_bidirectional_transport():
                     method="tools/call",
                     params={
                         "name": "ai_data_analyst",
-                        "arguments": {"data": "System latency reduced by 40% after caching enabled."},
+                        "arguments": {
+                            "data": "System latency reduced by 40% after caching enabled."
+                        },
                     },
                 )
             )
@@ -309,7 +324,10 @@ async def test_full_duplex_bidirectional_transport():
                     id=sampling_req_id,
                     result={
                         "role": "assistant",
-                        "content": {"type": "text", "text": "Positive sentiment. Performance improvement."},
+                        "content": {
+                            "type": "text",
+                            "text": "Positive sentiment. Performance improvement.",
+                        },
                     },
                 )
             )

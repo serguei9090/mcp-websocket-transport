@@ -1,12 +1,15 @@
-FROM node:20-alpine
+FROM oven/bun:1-alpine
 
 WORKDIR /app
 
 COPY typescript /app/typescript
 WORKDIR /app/typescript
 
-RUN npm install && npm run build
+RUN bun install && bun run build
 
 EXPOSE 8765
 
-CMD ["node", "examples/server.js"]
+ENV HOST=0.0.0.0
+ENV PORT=8765
+
+CMD ["bun", "run", "examples/mcp-tool-server.ts"]

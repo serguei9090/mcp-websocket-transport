@@ -1,21 +1,29 @@
 version: '3.8'
 
 services:
-  python-server:
+  python-mcp-server:
     build:
       context: ..
       dockerfile: docker/Dockerfile.python
+    container_name: mcp-python-server
     ports:
-      - "8765:8765"
+      - "8767:8767"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8767
     networks:
       - mcp-net
 
-  typescript-server:
+  typescript-mcp-server:
     build:
       context: ..
       dockerfile: docker/Dockerfile.typescript
+    container_name: mcp-ts-server
     ports:
-      - "8766:8765"
+      - "8765:8765"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8765
     networks:
       - mcp-net
 

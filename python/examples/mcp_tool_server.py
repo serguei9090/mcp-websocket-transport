@@ -113,9 +113,12 @@ async def handler(websocket):
 
 
 async def main():
-    port = 8767
-    print(f"[SERVER] Python MCP Tool Server listening on ws://localhost:{port}")
-    async with websockets.serve(handler, "localhost", port):
+    import os
+
+    port = int(os.getenv("PORT", "8767"))
+    host = os.getenv("HOST", "0.0.0.0")
+    print(f"[SERVER] Python MCP Tool Server listening on ws://{host}:{port}")
+    async with websockets.serve(handler, host, port):
         await asyncio.Future()
 
 
