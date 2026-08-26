@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python-tests:
+    name: Python Tests & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.12
+
+      - name: Install dependencies
+        working-directory: python
+        run: uv sync --all-extras
+
+      - name: Lint with Ruff
+        working-directory: python
+        run: uv run ruff check .
+
+      - name: Run Pytest
+        working-directory: python
+        run: uv run --all-extras pytest -v
+
+  typescript-tests:
+    name: TypeScript Tests & Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Biome
+        uses: biomejs/setup-biome@v2
+
+      - name: Run Biome Check
+        run: biome check .
+
+      - name: Install dependencies
+        working-directory: typescript
+        run: bun install --frozen-lockfile
+
+      - name: Build TypeScript
+        working-directory: typescript
+        run: bun run build
+
+      - name: Run TypeScript Tests
+        working-directory: typescript
+        run: bun run test
