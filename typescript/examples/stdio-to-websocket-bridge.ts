@@ -1,46 +1,18 @@
-import readline from "node:readline";
-import WebSocket from "ws";
+import { runBridge } from "../src/bridge.js";
 
-/**
- * TypeScript STDIO-to-WebSocket Bridge for MCP Hosts.
- */
-async function main() {
-  const url = process.env.MCP_WS_URL || "ws://localhost:8765";
-  const ws = new WebSocket(url);
-
-  ws.on("open", () => {
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-      terminal: false,
-    });
-
-    rl.on("line", (line) => {
-      if (line.trim() && ws.readyState === WebSocket.OPEN) {
-        ws.send(line);
-      }
-    });
-
-    rl.on("close", () => {
-      ws.close();
-    });
-  });
-
-  ws.on("message", (data) => {
-    const text = data.toString();
-    process.stdout.write(`${text}\n`);
-  });
-
-  ws.on("error", (err) => {
-    process.stderr.write(`WebSocket error: ${err.message}\n`);
-  });
-
-  ws.on("close", () => {
-    process.exit(0);
-  });
+// Execute bridge with CLI arguments
+const args = process.argv.slice(2);
+let targetUrl: string | undefined;
+for (let i = 0; i < args.length; i++) {
+  if (args[i] === "--url" && i + 1 < args.length) {
+    targetUrl = args[i + 1];
+    break;
+  } else if (!args[i].startsWith("-") && !targetUrl) {
+    targetUrl = args[i];
+  }
 }
 
-main().catch((err) => {
+runBridge(targetUrl).catch((err) => {
   console.error("Bridge failed:", err);
   process.exit(1);
 });
