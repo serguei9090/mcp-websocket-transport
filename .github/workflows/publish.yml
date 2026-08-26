@@ -31,8 +31,9 @@ jobs:
         run: uv build
 
       - name: Publish to PyPI
-        working-directory: python
-        run: uv publish
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          packages-dir: python/dist/
 
   publish-npm:
     name: Publish TypeScript Package to npm
@@ -47,7 +48,6 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          registry-url: "https://registry.npmjs.org"
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
