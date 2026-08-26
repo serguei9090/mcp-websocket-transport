@@ -1,209 +1,127 @@
-@modelcontextprotocol/transport-websocket
- 
+# 🟦 TypeScript `mcp-websocket`
 
-Full-duplex WebSocket Transport for the Model Context Protocol (MCP) in TypeScript, Node.js, and modern browser runtimes.
+[![npm Version](https://img.shields.io/npm/v/mcp-websocket?color=red&label=npm)](https://www.npmjs.com/package/mcp-websocket)
+[![Runtime Support](https://img.shields.io/badge/runtime-Node.js%20%7C%20Bun%20%7C%20Browser-green)](https://www.npmjs.com/package/mcp-websocket)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](../LICENSE)
 
+Full-duplex WebSocket Transport for the Model Context Protocol (MCP) in TypeScript, Node.js, Bun, and modern browser runtimes.
 
-🚀 Why WebSocket Transport for MCP?
-The standard Model Context Protocol (MCP) specifies two primary transports: stdio (for local CLI processes) and HTTP with SSE (Streamable HTTP / Server-Sent Events for remote connections).
+---
 
-While Streamable HTTP works across standard HTTP infrastructure, it introduces notable architectural tradeoffs:
+## 📦 Installation
 
-Asymmetric Duplexing: Client-to-server requests go over standard HTTP POST requests, while server-to-client messages travel over long-lived SSE streams.
-Connection & Session Reconnection Overhead: SSE drops require stateful session tokens, message replay buffers, or complex reconnection polling.
-Firewall / Reverse Proxy Buffering: Some proxies aggressively buffer SSE chunks, delaying real-time tool execution or progress notifications.
-🌟 WebSocket Advantages
-True Full-Duplex Bi-Directional Streaming: Single TCP connection for requests, responses, notifications, progress streams, and server-initiated sampling.
-Minimal Maintenance Surface (<50 LOC): Bridges raw WebSocket JSON-RPC frames directly into the official MCP SDK message pipeline.
-Isomorphic Compatibility: Works in Node.js (via ws / isomorphic-ws), Bun, Deno, and standard Web Browsers.
-Zero Polling Overhead: Instant bi-directional messaging with sub-millisecond overhead.
+```bash
+# Using bun (recommended)
+bun add mcp-websocket @modelcontextprotocol/sdk ws
 
-
-📦 Installation
 # Using npm
-
-npm install @modelcontextprotocol/transport-websocket @modelcontextprotocol/sdk ws
-
-# Using bun
-
-bun add @modelcontextprotocol/transport-websocket @modelcontextprotocol/sdk ws
+npm install mcp-websocket @modelcontextprotocol/sdk ws
 
 # Using pnpm
+pnpm add mcp-websocket @modelcontextprotocol/sdk ws
+```
 
-pnpm add @modelcontextprotocol/transport-websocket @modelcontextprotocol/sdk ws
+---
 
+## 🛠️ Quickstart
 
-🛠️ Quickstart
-1. TypeScript MCP Server (server.ts)
+### 1. TypeScript MCP Server (`examples/mcp-tool-server.ts`)
+```typescript
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-
-import {
-
-  CallToolRequestSchema,
-
-  ListToolsRequestSchema,
-
-} from "@modelcontextprotocol/sdk/types.js";
-
+import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 import { WebSocketServer } from "ws";
-
-import { WebSocketServerTransport } from "@modelcontextprotocol/transport-websocket";
-
-// 1. Initialize MCP Server
-
-const server = new Server(
-
-  { name: "ws-mcp-server", version: "1.0.0" },
-
-  { capabilities: { tools: {} } }
-
-);
-
-// 2. Register MCP Tools
-
-server.setRequestHandler(ListToolsRequestSchema, async () => ({
-
-  tools: [
-
-    {
-
-      name: "ping",
-
-      description: "Health check tool",
-
-      inputSchema: { type: "object" },
-
-    },
-
-  ],
-
-}));
-
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
-
-  if (request.params.name === "ping") {
-
-    return { content: [{ type: "text", text: "pong" }] };
-
-  }
-
-  throw new Error(`Tool not found: ${request.params.name}`);
-
-});
-
-// 3. Start WebSocket Server
+import { WebSocketServerTransport } from "mcp-websocket";
 
 const wss = new WebSocketServer({ port: 8765 });
-
-console.log("MCP WebSocket server running at ws://localhost:8765");
+console.log("🚀 MCP WebSocket Server running on ws://localhost:8765");
 
 wss.on("connection", async (ws) => {
-
-  console.log("Client connected");
-
-  const transport = new WebSocketServerTransport(ws);
-
-  await server.connect(transport);
-
-});
-
-
-2. TypeScript MCP Client (client.ts)
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-
-import WebSocket from "ws";
-
-import { WebSocketClientTransport } from "@modelcontextprotocol/transport-websocket";
-
-async function run() {
-
-  const client = new Client(
-
-    { name: "ws-mcp-client", version: "1.0.0" },
-
-    { capabilities: {} }
-
+  const server = new Server(
+    { name: "calculator-server", version: "0.1.0" },
+    { capabilities: { tools: {} } }
   );
 
-  // In Node.js pass the 'ws' constructor; in browsers pass undefined
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: [
+      {
+        name: "add_numbers",
+        description: "Adds two numbers together and returns the sum.",
+        inputSchema: {
+          type: "object",
+          properties: { a: { type: "number" }, b: { type: "number" } },
+          required: ["a", "b"]
+        }
+      }
+    ]
+  }));
 
-  const transport = new WebSocketClientTransport("ws://localhost:8765", {
-
-    WebSocket,
-
+  server.setRequestHandler(CallToolRequestSchema, async (req) => {
+    const { a, b } = req.params.arguments as any;
+    return { content: [{ type: "text", text: `Result: ${Number(a) + Number(b)}` }] };
   });
 
-  await client.connect(transport);
+  await server.connect(new WebSocketServerTransport(ws));
+});
+```
 
-  console.log("Connected to MCP server!");
+### 2. TypeScript MCP Client (`examples/mcp-tool-client.ts`)
+```typescript
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { WebSocketClientTransport } from "mcp-websocket";
+import WebSocket from "ws";
 
-  // List tools
+async function main() {
+  const client = new Client({ name: "ts-client", version: "0.1.0" });
+  await client.connect(new WebSocketClientTransport("ws://localhost:8765", { WebSocket }));
 
   const tools = await client.listTools();
+  console.log("Discovered Tools:", tools.tools.map(t => t.name));
 
-  console.log("Tools:", tools);
-
-  // Call tool
-
-  const result = await client.callTool({ name: "ping", arguments: {} });
-
-  console.log("Result:", result);
+  const result = await client.callTool({ name: "add_numbers", arguments: { a: 25, b: 75 } });
+  console.log("Tool Result:", result.content[0].text);
 
   await client.close();
-
 }
 
-run().catch(console.error);
+main();
+```
 
+---
 
-📖 API Reference
-WebSocketClientTransport
-Implements the official MCP Transport interface.
+## 🌉 Desktop Host Bridge (`mcp-ws-bridge`)
 
-constructor(url: string | URL, options?: WebSocketClientOptions)
+To connect **Claude Desktop, LM Studio, Cursor, or Antigravity** to a running TypeScript WebSocket server:
 
-options.WebSocket: Custom WebSocket class (required in Node.js, e.g. import WebSocket from 'ws').
-options.protocols: Subprotocol list string or array.
-start(): Promise<void>: Connects to the server.
-send(message: JSONRPCMessage): Promise<void>: Sends a message.
-close(): Promise<void>: Closes the connection.
-WebSocketServerTransport
-Wraps an incoming server-side WebSocket client connection.
+```json
+{
+  "mcpServers": {
+    "my-ts-websocket-tools": {
+      "command": "bun",
+      "args": [
+        "run",
+        "path/to/mcp-websocket/typescript/examples/stdio-to-websocket-bridge.ts",
+        "--url",
+        "ws://localhost:8765"
+      ]
+    }
+  }
+}
+```
 
-constructor(socket: any, options?: WebSocketServerTransportOptions)
+---
 
-start(): Promise<void>: Attaches event listeners to the socket.
-send(message: JSONRPCMessage): Promise<void>: Sends a message to the client.
-close(): Promise<void>: Closes the client connection.
+## 🧪 Testing & Build
 
+```bash
+# Build TypeScript
+bun run build
 
-🧪 Manual Testing
-Run the included end-to-end test suite:
+# Run automated tests
+bun run test
+```
 
-npm test
+---
 
+## 📄 License
 
-🚢 Publishing to npm
-Follow these steps to publish to the official npm registry:
-1. Build the Package
-npm run build
-2. Authenticate with npm
-npm login
-3. Verify Package Manifest
-Ensure package.json contains:
-
-Correct package name (@modelcontextprotocol/transport-websocket or mcp-websocket)
-Correct semantic version (e.g. 1.0.0)
-Valid repository, author, and license fields
-4. Publish
-# For scoped public packages:
-
-npm publish --access public
-
-# For unscoped packages:
-
-npm publish
-
-
-📄 License
 MIT License.

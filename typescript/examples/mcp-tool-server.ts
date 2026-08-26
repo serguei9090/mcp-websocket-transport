@@ -83,7 +83,9 @@ function createServerInstance() {
 const port = Number(process.env.PORT || 8765);
 const host = process.env.HOST || "0.0.0.0";
 const wss = new WebSocketServer({ port, host });
-console.log(`🚀 TypeScript MCP WebSocket Tool Server listening on ws://${host}:${port}`);
+console.log(
+  `🚀 TypeScript MCP WebSocket Tool Server listening on ws://${host}:${port}`,
+);
 
 wss.on("connection", async (ws) => {
   console.log("⚡ Client connected to TypeScript MCP Server");

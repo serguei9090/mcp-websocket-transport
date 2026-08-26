@@ -120,26 +120,56 @@ bun run examples/ai-mcp-agent.ts
 
 ---
 
-## 3. Connecting to External MCP Clients (Claude Desktop / Antigravity)
+## 3. Connecting to External MCP Desktop Hosts (Claude Desktop / Antigravity / LM Studio)
 
-To connect standard MCP client apps to a WebSocket MCP Server:
+Desktop MCP hosts communicate via standard I/O (`stdio`). You can connect them to any running WebSocket server using the built-in `mcp-ws-bridge`:
 
-### Configuration in `claude_desktop_config.json`:
-Because standard desktop apps use `stdio` out of the box, you can use the WebSocket client as a bridge command:
-
+### Python Bridge Configuration:
 ```json
 {
   "mcpServers": {
-    "remote-websocket-tools": {
+    "websocket-python-tools": {
       "command": "uv",
       "args": [
         "run",
         "--directory",
         "i:/01-Master_Code/Apps/MCP-WebSocket-Transport/python",
-        "examples/mcp_tool_client.py"
+        "python",
+        "examples/stdio_to_websocket_bridge.py",
+        "--url",
+        "ws://localhost:8767"
       ]
     }
   }
 }
 ```
-Or connect directly from any custom agent using `WebSocketClientTransport("ws://localhost:8765")`.
+
+### TypeScript Bridge Configuration:
+```json
+{
+  "mcpServers": {
+    "websocket-ts-tools": {
+      "command": "bun",
+      "args": [
+        "run",
+        "i:/01-Master_Code/Apps/MCP-WebSocket-Transport/typescript/examples/stdio-to-websocket-bridge.ts",
+        "--url",
+        "ws://localhost:8765"
+      ]
+    }
+  }
+}
+```
+
+---
+
+## 4. Live Testing with Local LLM (LM Studio / Gemma)
+
+1. Start the Python server:
+   ```bash
+   cd python
+   uv run python examples/mcp_tool_server.py
+   ```
+2. Open LM Studio, load your model (e.g. `google/gemma-4-e2b`), and ask:
+   > *"Calculate my BMI for 80 kg and 1.85 m, and reverse the text 'WebSocket Transport'."*
+3. Gemma will execute the tools over the WebSocket connection in real time!

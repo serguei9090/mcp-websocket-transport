@@ -91,10 +91,7 @@ def main_cli():
     args = parser.parse_args()
 
     target_url = (
-        args.url_opt
-        or args.url_pos
-        or os.getenv("MCP_WS_URL")
-        or "ws://localhost:8767"
+        args.url_opt or args.url_pos or os.getenv("MCP_WS_URL") or "ws://localhost:8767"
     )
 
     with contextlib.suppress(KeyboardInterrupt, asyncio.CancelledError):

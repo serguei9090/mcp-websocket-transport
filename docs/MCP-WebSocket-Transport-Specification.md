@@ -106,7 +106,36 @@ sequenceDiagram
 
 ---
 
-## 5. Automated Verification & Test Proofs
+## 5. Universal Desktop Host Bridge (`mcp-ws-bridge`)
+
+While custom AI agents and web clients connect to WebSocket servers natively, desktop hosts (Claude Desktop, LM Studio, Cursor, Antigravity) only execute local child processes using `stdio`.
+
+To provide 100% plug-and-play compatibility, both Python and TypeScript packages provide **`mcp-ws-bridge`**:
+
+```
+┌────────────────────────────────────────────────────────────┐
+│      Claude Desktop / LM Studio / Cursor / Antigravity     │
+│                     (STDIO Interface)                      │
+└─────────────────────────────┬──────────────────────────────┘
+                              │ Standard I/O (stdin/stdout)
+                              ▼
+┌────────────────────────────────────────────────────────────┐
+│                     `mcp-ws-bridge`                        │
+│           (Cross-Platform Transparent Pipe)                │
+└─────────────────────────────┬──────────────────────────────┘
+                              │ Full-Duplex WebSocket (ws://)
+                              ▼
+┌────────────────────────────────────────────────────────────┐
+│                  Remote MCP WebSocket Server               │
+│                (Localhost, Docker, Cloud)                  │
+└────────────────────────────────────────────────────────────┘
+```
+
+The bridge pipes `stdin` lines directly into WebSocket frames and writes WebSocket responses to `stdout` with automated retry reconnects and sub-millisecond throughput.
+
+---
+
+## 6. Automated Verification & Test Proofs
 
 Both Python and TypeScript implementations include automated test suites covering all full-duplex flows.
 
