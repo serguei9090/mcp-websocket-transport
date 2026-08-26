@@ -1,8 +1,8 @@
+import { WebSocket, WebSocketServer } from "ws";
 import {
   WebSocketClientTransport,
   WebSocketServerTransport,
 } from "../src/index.js";
-import { WebSocket, WebSocketServer } from "ws";
 
 /**
  * TypeScript Live Demo: Progress Streaming & Reverse Roots Discovery
