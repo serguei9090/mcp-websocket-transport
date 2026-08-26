@@ -45,8 +45,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/serguei9090/mcp-websocket"
-Repository = "https://github.com/serguei9090/mcp-websocket"
+Homepage = "https://github.com/serguei9090/mcp-websocket-transport"
+Repository = "https://github.com/serguei9090/mcp-websocket-transport"
 
 [project.scripts]
 mcp-ws-bridge = "mcp_websocket_transport.bridge:main_cli"

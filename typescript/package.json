@@ -40,11 +40,11 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/serguei9090/mcp-websocket.git"
+    "url": "git+https://github.com/serguei9090/mcp-websocket-transport.git"
   },
-  "homepage": "https://github.com/serguei9090/mcp-websocket#readme",
+  "homepage": "https://github.com/serguei9090/mcp-websocket-transport#readme",
   "bugs": {
-    "url": "https://github.com/serguei9090/mcp-websocket/issues"
+    "url": "https://github.com/serguei9090/mcp-websocket-transport/issues"
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": ">=1.0.0"
