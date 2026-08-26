@@ -38,6 +38,14 @@
   ],
   "author": "Serguei Castillo",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serguei9090/mcp-websocket.git"
+  },
+  "homepage": "https://github.com/serguei9090/mcp-websocket#readme",
+  "bugs": {
+    "url": "https://github.com/serguei9090/mcp-websocket/issues"
+  },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": ">=1.0.0"
   },
