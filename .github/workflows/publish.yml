@@ -9,6 +9,12 @@ jobs:
   publish-pypi:
     name: Publish Python Package to PyPI
     runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/mcp-websocket
+    permissions:
+      id-token: write # Required for PyPI Trusted Publishing (OIDC)
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -28,11 +34,18 @@ jobs:
         working-directory: python
         env:
           UV_PUBLISH_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        run: uv publish
+        run: |
+          if [ -n "$UV_PUBLISH_TOKEN" ]; then
+            uv publish --token "$UV_PUBLISH_TOKEN"
+          else
+            uv publish --trusted-publishing always
+          fi
 
   publish-npm:
     name: Publish TypeScript Package to npm
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -49,7 +62,7 @@ jobs:
 
       - name: Install Dependencies
         working-directory: typescript
-        run: bun install --frozen-lockfile
+        run: bun install
 
       - name: Build Package
         working-directory: typescript
@@ -59,4 +72,9 @@ jobs:
         working-directory: typescript
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npm publish --access public
+        run: |
+          if [ -n "$NODE_AUTH_TOKEN" ]; then
+            npm publish --access public
+          else
+            echo "Skipping npm publish: NPM_TOKEN secret not configured yet"
+          fi
