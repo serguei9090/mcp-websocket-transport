@@ -2,6 +2,7 @@
 MCP WebSocket Transport package for Python.
 """
 
+from .bridge import main_cli, run_bridge
 from .client import WebSocketClientTransport, websocket_client
 from .server import WebSocketServerTransport, serve_websocket
 from .types import (
@@ -21,6 +22,8 @@ __all__ = [
     "JSONRPCResponse",
     "WebSocketClientTransport",
     "WebSocketServerTransport",
+    "main_cli",
+    "run_bridge",
     "serialize_message",
     "serve_websocket",
     "websocket_client",
