@@ -39,21 +39,36 @@ async def pipe_ws_to_stdout(ws):
         sys.stdout.flush()
 
 
-async def run_bridge(url: str):
-    """Connects to target WebSocket URL and bridges bidirectional stdio traffic."""
+async def run_bridge(url: str, retries: int = 3, retry_delay: float = 1.0):
+    """Connects to target WebSocket URL and bridges bidirectional stdio traffic with retry support."""
+    ws = None
+    for attempt in range(1, retries + 1):
+        try:
+            ws = await websockets.connect(url)
+            break
+        except (ConnectionRefusedError, OSError) as err:
+            if attempt < retries:
+                sys.stderr.write(
+                    f"⏳ [mcp-ws-bridge] Waiting for server at {url} (attempt {attempt}/{retries})...\n"
+                )
+                sys.stderr.flush()
+                await asyncio.sleep(retry_delay)
+            else:
+                sys.stderr.write(
+                    f"❌ [mcp-ws-bridge] Connection refused at {url}: {err}\n"
+                    "   💡 Start your server first: 'uv run python examples/mcp_tool_server.py'\n"
+                )
+                sys.stderr.flush()
+                sys.exit(1)
+
     try:
-        async with websockets.connect(url) as ws:
-            await asyncio.gather(
-                pipe_stdin_to_ws(ws),
-                pipe_ws_to_stdout(ws),
-            )
-    except (ConnectionRefusedError, OSError) as err:
-        sys.stderr.write(
-            f"❌ [mcp-ws-bridge] Failed to connect to MCP WebSocket server at {url}: {err}\n"
-            "   Ensure your MCP WebSocket server is running before launching the host.\n"
+        await asyncio.gather(
+            pipe_stdin_to_ws(ws),
+            pipe_ws_to_stdout(ws),
         )
-        sys.stderr.flush()
-        sys.exit(1)
+    finally:
+        if ws:
+            await ws.close()
 
 
 def main_cli():
