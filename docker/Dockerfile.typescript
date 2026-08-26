@@ -1,0 +1,12 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+COPY typescript /app/typescript
+WORKDIR /app/typescript
+
+RUN npm install && npm run build
+
+EXPOSE 8765
+
+CMD ["node", "examples/server.js"]

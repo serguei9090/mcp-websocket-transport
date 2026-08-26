@@ -1,0 +1,56 @@
+{
+  "name": "mcp-transport-websocket",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Full-duplex WebSocket Transport for Model Context Protocol (MCP) in TypeScript and Node.js",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "node test/run-tests.js"
+  },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "transport",
+    "websocket",
+    "ws",
+    "json-rpc",
+    "llm",
+    "ai"
+  ],
+  "author": "Serguei Castillo",
+  "license": "MIT",
+  "peerDependencies": {
+    "@modelcontextprotocol/sdk": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@modelcontextprotocol/sdk": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "isomorphic-ws": "^5.0.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.0",
+    "@types/node": "^20.0.0",
+    "@types/ws": "^8.5.10",
+    "typescript": "^5.4.0"
+  }
+}

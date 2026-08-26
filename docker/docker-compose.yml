@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  python-server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.python
+    ports:
+      - "8765:8765"
+    networks:
+      - mcp-net
+
+  typescript-server:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.typescript
+    ports:
+      - "8766:8765"
+    networks:
+      - mcp-net
+
+networks:
+  mcp-net:
+    driver: bridge
