@@ -29,16 +29,11 @@ if hasattr(sys.stdin, "reconfigure"):
 
 
 async def pipe_stdin_to_ws(ws):
-    loop = asyncio.get_running_loop()
-    reader = asyncio.StreamReader()
-    protocol = asyncio.StreamReaderProtocol(reader)
-    await loop.connect_read_pipe(lambda: protocol, sys.stdin)
-
     while True:
-        line = await reader.readline()
+        line = await asyncio.to_thread(sys.stdin.readline)
         if not line:
             break
-        text = line.decode("utf-8").strip()
+        text = line.strip()
         if text:
             await ws.send(text)
 
@@ -46,7 +41,7 @@ async def pipe_stdin_to_ws(ws):
 async def pipe_ws_to_stdout(ws):
     async for msg in ws:
         text = msg if isinstance(msg, str) else msg.decode("utf-8")
-        sys.stdout.write(text + "\n")
+        sys.stdout.write(f"{text}\n")
         sys.stdout.flush()
 
 

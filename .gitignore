@@ -10,6 +10,7 @@ build/
 
 # Helper scripts and scratch space
 /scratch/
+/temp/
 
 # Linters and tool caches
 .ruff_cache/
