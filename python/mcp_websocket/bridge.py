@@ -11,6 +11,7 @@ import asyncio
 import contextlib
 import os
 import sys
+
 import websockets
 
 if hasattr(sys.stdout, "reconfigure"):

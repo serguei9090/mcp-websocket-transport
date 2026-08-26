@@ -1,6 +1,6 @@
 {
-  "name": "mcp-transport-websocket",
-  "version": "1.0.0",
+  "name": "mcp-websocket",
+  "version": "0.1.0",
   "type": "module",
   "description": "Full-duplex WebSocket Transport for Model Context Protocol (MCP) in TypeScript and Node.js",
   "main": "./dist/index.js",

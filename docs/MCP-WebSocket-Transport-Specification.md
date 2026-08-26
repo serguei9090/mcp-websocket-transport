@@ -3,7 +3,7 @@
 > **A Full-Duplex, Symmetric Transport Protocol for Real-Time & Reverse-Request MCP Architectures**  
 > *Author: Serguei Castillo*  
 > *Status: Proposal / Production Implementation*  
-> *Reference Repositories: Python (`mcp-transport-websocket`) | TypeScript (`mcp-transport-websocket`)*
+> *Reference Repositories: Python (`mcp-websocket`) | TypeScript (`mcp-websocket`)*
 
 ---
 

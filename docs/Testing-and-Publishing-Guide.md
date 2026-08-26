@@ -12,7 +12,7 @@ Low Overhead: Avoids HTTP header serialization overhead on each request/response
 
 2. TypeScript / JavaScript Package (@modelcontextprotocol/transport-websocket)
 Project Structure
-mcp-transport-websocket-ts/
+mcp-websocket-ts/
 
 ├── package.json
 
@@ -87,9 +87,9 @@ npm publish --access public
 npm publish
 
 
-3. Python Package (mcp-transport-websocket)
+3. Python Package (mcp-websocket)
 Project Structure
-mcp-transport-websocket-py/
+mcp-websocket-py/
 
 ├── pyproject.toml
 
@@ -97,7 +97,7 @@ mcp-transport-websocket-py/
 
 ├── README.md
 
-├── mcp_transport_websocket/
+├── mcp_websocket/
 
 │   ├── __init__.py
 
@@ -159,8 +159,8 @@ uv build
 
 This generates:
 
-dist/mcp_transport_websocket-1.0.0-py3-none-any.whl
-dist/mcp_transport_websocket-1.0.0.tar.gz
+dist/mcp_websocket-1.0.0-py3-none-any.whl
+dist/mcp_websocket-1.0.0.tar.gz
 
 Validate Package Distribution:
 

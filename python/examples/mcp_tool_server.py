@@ -8,7 +8,7 @@ import sys
 
 import websockets
 
-from mcp_transport_websocket import serve_websocket
+from mcp_websocket import serve_websocket
 
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8")

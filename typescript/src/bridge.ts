@@ -6,7 +6,7 @@ import WebSocket from "ws";
  * CLI Entrypoint for STDIO-to-WebSocket Bridge.
  * Usage:
  *   mcp-ws-bridge ws://localhost:8765
- *   npx mcp-transport-websocket ws://localhost:8765
+ *   npx mcp-websocket ws://localhost:8765
  */
 export async function runBridge(targetUrl?: string): Promise<void> {
   const url = targetUrl || process.env.MCP_WS_URL || "ws://localhost:8765";
@@ -49,7 +49,10 @@ export async function runBridge(targetUrl?: string): Promise<void> {
 }
 
 // Auto-run if executed directly as a script
-if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("mcp-ws-bridge")) {
+if (
+  import.meta.url === `file://${process.argv[1]}` ||
+  process.argv[1]?.endsWith("mcp-ws-bridge")
+) {
   const targetUrl = process.argv[2];
   runBridge(targetUrl).catch((err) => {
     process.stderr.write(`Bridge fatal error: ${err.message}\n`);

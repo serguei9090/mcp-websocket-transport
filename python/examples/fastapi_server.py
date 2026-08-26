@@ -5,7 +5,7 @@ Example FastAPI server using MCP WebSocket Transport.
 import uvicorn
 from fastapi import FastAPI, WebSocket
 
-from mcp_transport_websocket import serve_websocket
+from mcp_websocket import serve_websocket
 
 app = FastAPI(title="MCP WebSocket Server")
 

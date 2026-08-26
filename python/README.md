@@ -1,4 +1,4 @@
-mcp-transport-websocket
+mcp-websocket
   
 
 Full-duplex WebSocket Transport for the Model Context Protocol (MCP) in Python. Built for maximum performance with AnyIO, FastAPI, Starlette, and websockets.
@@ -22,19 +22,19 @@ Low Latency & Low Overhead: Sub-millisecond packet delivery without HTTP header 
 📦 Installation
 # Basic installation
 
-pip install mcp-transport-websocket
+pip install mcp-websocket
 
 # With FastAPI / Uvicorn support
 
-pip install "mcp-transport-websocket[fastapi]"
+pip install "mcp-websocket[fastapi]"
 
 # With websockets support
 
-pip install "mcp-transport-websocket[websockets]"
+pip install "mcp-websocket[websockets]"
 
 # Using uv
 
-uv add "mcp-transport-websocket[all]"
+uv add "mcp-websocket[all]"
 
 
 🛠️ Quickstart
@@ -45,7 +45,7 @@ from mcp.server import Server
 
 from mcp.types import Tool, TextContent
 
-from mcp_transport_websocket import serve_websocket
+from mcp_websocket import serve_websocket
 
 import uvicorn
 
@@ -101,7 +101,7 @@ from mcp.server import Server
 
 from mcp.types import Tool, TextContent
 
-from mcp_transport_websocket import serve_websocket
+from mcp_websocket import serve_websocket
 
 mcp_server = Server("websockets-demo")
 
@@ -139,7 +139,7 @@ import asyncio
 
 from mcp.client.session import ClientSession
 
-from mcp_transport_websocket import websocket_client
+from mcp_websocket import websocket_client
 
 async def main():
 
@@ -209,8 +209,8 @@ uv build
 
 This creates distribution archives in ./dist/:
 
-mcp_transport_websocket-1.0.0-py3-none-any.whl
-mcp_transport_websocket-1.0.0.tar.gz
+mcp_websocket-1.0.0-py3-none-any.whl
+mcp_websocket-1.0.0.tar.gz
 3. Verify Package
 twine check dist/*
 4. Upload to TestPyPI (Recommended first step)

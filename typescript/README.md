@@ -192,7 +192,7 @@ npm login
 3. Verify Package Manifest
 Ensure package.json contains:
 
-Correct package name (@modelcontextprotocol/transport-websocket or mcp-transport-websocket)
+Correct package name (@modelcontextprotocol/transport-websocket or mcp-websocket)
 Correct semantic version (e.g. 1.0.0)
 Valid repository, author, and license fields
 4. Publish

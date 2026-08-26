@@ -4,7 +4,7 @@ Example Python client using MCP WebSocket Transport.
 
 import asyncio
 
-from mcp_transport_websocket import JSONRPCRequest, WebSocketClientTransport
+from mcp_websocket import JSONRPCRequest, WebSocketClientTransport
 
 
 async def main():
