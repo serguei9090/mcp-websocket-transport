@@ -105,6 +105,30 @@ class MCPToolServer:
                         "result": {"content": [{"type": "text", "text": res_text}]},
                     }
                 )
+            # 4. Ping
+            elif method == "ping":
+                await write_stream.send({"jsonrpc": "2.0", "id": msg_id, "result": {}})
+            # 5. Prompts / Resources (return empty lists instead of hanging)
+            elif method == "prompts/list":
+                await write_stream.send(
+                    {"jsonrpc": "2.0", "id": msg_id, "result": {"prompts": []}}
+                )
+            elif method == "resources/list":
+                await write_stream.send(
+                    {"jsonrpc": "2.0", "id": msg_id, "result": {"resources": []}}
+                )
+            elif msg_id is not None:
+                # Catch-all for any unhandled request so the client never hangs waiting
+                await write_stream.send(
+                    {
+                        "jsonrpc": "2.0",
+                        "id": msg_id,
+                        "error": {
+                            "code": -32601,
+                            "message": f"Method '{method}' not supported",
+                        },
+                    }
+                )
 
 
 async def handler(websocket):
