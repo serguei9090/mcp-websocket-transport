@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mcp-websocket-transport"
-version = "1.0.1"
+version = "1.0.2"
 description = "Full-duplex WebSocket Transport for the Model Context Protocol (MCP) in Python"
 readme = "README.md"
 requires-python = ">=3.10"
