@@ -2,7 +2,13 @@
 
 > [!NOTE]
 > ### 🎓 Educational & Academic Research Notice
-> This project is a personal learning and portfolio project developed strictly for **educational purposes, academic research, and exploring emerging technical concepts** (AI systems, cloud infrastructure, SRE, and modern software architectures).
+> This project is an **academic research implementation and open-source library** exploring full-duplex WebSocket transports for the Model Context Protocol (MCP).
+> - **Status:** Research Prototype & Open Source Library.
+> - **License:** Open source under the [MIT License](LICENSE) (published on PyPI and npm). Free for community use and contribution.
+
+---
+
+
 >
 > - **Status:** Personal Sandbox / Portfolio Piece.
 > - **Terms of Use:** Free for personal exploration, educational study, and non-commercial research.
