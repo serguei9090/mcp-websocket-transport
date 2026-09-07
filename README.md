@@ -1,5 +1,17 @@
 # 🌐 MCP WebSocket Transport (`mcp-websocket-transport`)
 
+> [!NOTE]
+> ### 🎓 Educational & Academic Research Notice
+> This project is a personal learning and portfolio project developed strictly for **educational purposes, academic research, and exploring emerging technical concepts** (AI systems, cloud infrastructure, SRE, and modern software architectures).
+>
+> - **Status:** Personal Sandbox / Portfolio Piece.
+> - **Terms of Use:** Free for personal exploration, educational study, and non-commercial research.
+> - **Production / Commercial Use:** For enterprise or commercial production usage, prior authorization and permission from the author are required.
+> - **Purpose:** Academic research, technical skill development, and architectural prototyping.
+
+---
+
+
 [![PyPI Version](https://img.shields.io/pypi/v/mcp-websocket-transport?color=blue&label=PyPI)](https://pypi.org/project/mcp-websocket-transport/)
 [![npm Version](https://img.shields.io/npm/v/mcp-websocket-transport?color=red&label=npm)](https://www.npmjs.com/package/mcp-websocket-transport)
 [![Python Support](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13-blue)](https://pypi.org/project/mcp-websocket-transport/)
